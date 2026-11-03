@@ -10,14 +10,24 @@ A repo's own `.harness/rules.md` adds to these; it never weakens them. Breaking 
 ## Verification
 - The repo's check command (`make check`, `mise run check`) must pass before you call work done.
   Never claim green without running it in this session.
-- Work is guided by tests. Write the test first, watch it fail for the right reason, then write the
-  code that makes it pass; the test names the behavior. A refactor keeps the tests green and changes
-  none of them.
+- Test first, then implement. For every new behavior or change of behavior, in this order:
+  1. Write the test that states the behavior (named after it, table-driven when there are several
+     inputs).
+  2. Run it and watch it fail, for the reason you expect (an assertion about the missing behavior,
+     not a compile error or a typo).
+  3. Write the smallest code that makes it pass, then run the whole check.
+  Say in your report that the test failed before and passes after. Tests written after the code,
+  to match what it already does, do not count: they pin the implementation, not the behavior.
+  A refactor keeps the tests green and changes none of them.
 - Every bug found (by you, the user or a failing run) starts with a regression test: write it first,
-  run it, see it fail for the reported reason, only then fix. Report that it failed before and passes
-  after. A bug that cannot be reproduced in a test is not understood yet: keep investigating or say
-  so; never ship a guess as a fix. A data bug also gets an eval or fixture case when a suite fits.
-- New behavior ships with tests. Table-driven where there are several cases.
+  run it, see it fail for the reported reason, only then fix. A bug that cannot be reproduced in a
+  test is not understood yet: keep investigating or say so; never ship a guess as a fix. A data bug
+  also gets an eval or fixture case when a suite fits.
+- What cannot be unit-tested (drawing on a GPU, a real window) is kept as thin as possible and
+  checked by the repo's visual or run check (a screenshot, a smoke run); the logic around it still
+  follows test first. Say which check you ran.
+- Code that is already there without tests is covered the same way when you touch it: pin the
+  current behavior with a test that passes, then change it test first.
 - Fixtures use real tool or provider output, never invented samples.
 - Never skip or delete a failing test, loosen an assertion to pass, or silence a linter without the
   user's approval.
