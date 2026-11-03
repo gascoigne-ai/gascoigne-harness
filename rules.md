@@ -11,8 +11,12 @@ A repo's own `.harness/rules.md` adds to these; it never weakens them. Breaking 
 - The repo's check command (`make check`, `mise run check`) must pass before you call work done.
   Never claim green without running it in this session.
 - Work is guided by tests. Write the test first, watch it fail for the right reason, then write the
-  code that makes it pass; the test names the behavior. Bugs get a failing test first, then the fix.
-  A refactor keeps the tests green and changes none of them.
+  code that makes it pass; the test names the behavior. A refactor keeps the tests green and changes
+  none of them.
+- Every bug found (by you, the user or a failing run) starts with a regression test: write it first,
+  run it, see it fail for the reported reason, only then fix. Report that it failed before and passes
+  after. A bug that cannot be reproduced in a test is not understood yet: keep investigating or say
+  so; never ship a guess as a fix. A data bug also gets an eval or fixture case when a suite fits.
 - New behavior ships with tests. Table-driven where there are several cases.
 - Fixtures use real tool or provider output, never invented samples.
 - Never skip or delete a failing test, loosen an assertion to pass, or silence a linter without the
@@ -22,6 +26,8 @@ A repo's own `.harness/rules.md` adds to these; it never weakens them. Breaking 
 - Table-driven designs (handler tables, dialect tables) over switch sprawl.
 - No speculative abstractions, options or hooks "for later".
 - Behavior a doc describes changes in the same commit as the doc.
+- Readability beats cleverness, performance and DRY; the rest of the style is in `code-style.md`.
+- Extend by adding a component or table row, never by special-casing one inside core.
 
 ## Naming
 - No one-letter names for parameters: `request`, not `r`; `message`, not `m`. A reader should not

@@ -6,6 +6,7 @@ Agent harness shared by the gascoigne repos. Each repo mounts it as a git submod
 | Path | What |
 |---|---|
 | `rules.md` | hard rules every repo follows (deps, verification, design, hygiene, worktrees) |
+| `code-style.md` | shape, errors, comments, docs, tests: how code reads in every repo |
 | `commit-style.md` | conventional commit format, body, trailer |
 | `skills/verify/` | generic verify skill |
 | `scripts/loop.sh` | autonomous task loop (`VERIFY_CMD` sets the check) |
@@ -19,6 +20,7 @@ git submodule update --init            # after a fresh clone or a new worktree
 ```text
 @.harness/common/rules.md
 @.harness/common/commit-style.md
+@.harness/common/code-style.md
 @.harness/rules.md
 ```
 Skills: symlink `.harness/skills/verify` to `../common/skills/verify`, so `.claude/skills` (a symlink to
