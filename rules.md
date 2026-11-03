@@ -10,8 +10,10 @@ A repo's own `.harness/rules.md` adds to these; it never weakens them. Breaking 
 ## Verification
 - The repo's check command (`make check`, `mise run check`) must pass before you call work done.
   Never claim green without running it in this session.
+- Work is guided by tests. Write the test first, watch it fail for the right reason, then write the
+  code that makes it pass; the test names the behavior. Bugs get a failing test first, then the fix.
+  A refactor keeps the tests green and changes none of them.
 - New behavior ships with tests. Table-driven where there are several cases.
-- Bugs get a failing test first, then the fix.
 - Fixtures use real tool or provider output, never invented samples.
 - Never skip or delete a failing test, loosen an assertion to pass, or silence a linter without the
   user's approval.
@@ -20,6 +22,13 @@ A repo's own `.harness/rules.md` adds to these; it never weakens them. Breaking 
 - Table-driven designs (handler tables, dialect tables) over switch sprawl.
 - No speculative abstractions, options or hooks "for later".
 - Behavior a doc describes changes in the same commit as the doc.
+
+## Naming
+- No one-letter names for parameters: `request`, not `r`; `message`, not `m`. A reader should not
+  have to look up the signature to know what an argument is. Applies to functions, methods and
+  closures, in every language.
+- Narrow exceptions: `t`/`b` for `*testing.T`/`*testing.B`, loop indices (`i`, `j`), and type
+  parameters (`T`, `K`, `V`).
 
 ## Hygiene
 - No competitor or other token-tool names in code, docs, tasks or commits. Describe techniques
