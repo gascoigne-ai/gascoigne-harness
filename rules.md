@@ -32,6 +32,21 @@ A repo's own `.harness/rules.md` adds to these; it never weakens them. Breaking 
 - Never skip or delete a failing test, loosen an assertion to pass, or silence a linter without the
   user's approval.
 
+## Working
+- Finish the whole job before you stop. Do not offer to continue: continue.
+- Ask the user before you delete anything. The one exception: a task file the loop finishes (git
+  keeps it).
+- End with a recap for someone who saw none of the work: key points first, in plain words.
+- Do not write an unfamiliar feature from scratch. Search GitHub for open-source projects, compare
+  their approaches, then propose 3 options: one from open source, one creative, one best. Wait for
+  the user's pick before you start.
+- Rate every bug you find from 1 to 10 for how often it would happen and from 1 to 10 for how bad it
+  is. Multiplied scores below 5: file an issue and leave the code alone. 5 or more: fix it, test
+  first (the regression-test rule above). Do not design for rare or future cases nobody asked about.
+- Weekly, at least: run the `ci-report` skill (queue, setup and task time of the slowest jobs) and
+  the `state-machines` skill (implicit state machines). Each reports first and changes nothing until
+  the user agrees.
+
 ## Design
 - Table-driven designs (handler tables, dialect tables) over switch sprawl.
 - No speculative abstractions, options or hooks "for later".

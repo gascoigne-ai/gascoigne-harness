@@ -5,10 +5,12 @@ Agent harness shared by the gascoigne repos. Each repo mounts it as a git submod
 
 | Path | What |
 |---|---|
-| `rules.md` | hard rules every repo follows (deps, verification, design, hygiene, worktrees) |
+| `rules.md` | hard rules every repo follows (deps, verification, working habits, design, hygiene, worktrees) |
 | `code-style.md` | shape, errors, comments, docs, tests: how code reads in every repo |
 | `commit-style.md` | conventional commit format, body, trailer |
 | `skills/verify/` | generic verify skill |
+| `skills/ci-report/` | weekly report: queue, setup and task time of the 5 slowest jobs |
+| `skills/state-machines/` | weekly audit of implicit state machines |
 | `scripts/loop.sh` | autonomous task loop (`VERIFY_CMD` sets the check) |
 
 ## Use in a repo
