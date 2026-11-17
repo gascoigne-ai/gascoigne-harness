@@ -11,12 +11,14 @@ Agent harness shared by the gascoigne repos. Each repo mounts it as a git submod
 | `code-style.md` | shape, errors, comments, docs, tests: how code reads in every repo |
 | `commit-style.md` | conventional commit format, body, trailer |
 | `skills/verify/` | generic verify skill |
+| `skills/task-loop/` | the task loop as a skill: an orchestrator agent runs one subagent per task and gates the result |
+| `agents/` | subagent roles the loop starts: `task-designer` (read-only), `task-implementer` |
 | `skills/ci-report/` | weekly report: queue, setup and task time of the 5 slowest jobs |
 | `skills/state-machines/` | weekly audit of implicit state machines |
 | `skills/data-model/` | design note before code; weekly data-model audit |
 | `templates/task.md` | task file template |
 | `scripts/check-layers.sh` | layer guard driven by `.harness/layers.txt` (rows: zone, patterns, may-import) |
-| `scripts/loop.sh` | autonomous task loop (`VERIFY_CMD` sets the check) |
+| `scripts/loop.sh` | headless fallback of the task loop for CI (`VERIFY_CMD` sets the check); agents use `skills/task-loop` |
 
 ## Use in a repo
 ```sh
@@ -30,6 +32,7 @@ git submodule update --init            # after a fresh clone or a new worktree
 @.harness/common/code-style.md
 @.harness/rules.md
 ```
+Agents: symlink `.claude/agents` to `.harness/agents` and `.harness/agents/task-designer.md`, `task-implementer.md` to `../common/agents/<name>.md`.
 Skills: symlink `.harness/skills/verify` to `../common/skills/verify`, so `.claude/skills` (a symlink to
 `.harness/skills`) finds it. A repo-specific `scripts/loop.sh` may wrap the shared one and set
 `VERIFY_CMD`.
@@ -53,6 +56,9 @@ work. A done task is deleted by the loop (git keeps it); open ideas live in `.ha
 | `not_before` | `YYYY-MM-DD`; not eligible earlier |
 | `depends_on` | task names; eligible once their files are gone from the checkout (merged) |
 
+Run the queue from an agent session with the `task-loop` skill (`/task-loop`, `/task-loop --dry-run`,
+`/task-loop --lint`, `/task-loop --once`, `/task-loop <task-name>`). The orchestrator starts subagents inside
+the session, so they use its tool approvals. The shell fallback, for CI without an agent session:
 ```sh
 .harness/scripts/loop.sh --dry-run   # list eligible tasks
 .harness/scripts/loop.sh --lint      # validate task headers
