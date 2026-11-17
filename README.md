@@ -6,11 +6,16 @@ Agent harness shared by the gascoigne repos. Each repo mounts it as a git submod
 | Path | What |
 |---|---|
 | `rules.md` | hard rules every repo follows (deps, verification, working habits, design, hygiene, worktrees) |
+| `data-structures.md` | choosing data structures from access patterns; decision table, red flags |
+| `architecture-style.md` | core, adapters, composition root; when a port is justified |
 | `code-style.md` | shape, errors, comments, docs, tests: how code reads in every repo |
 | `commit-style.md` | conventional commit format, body, trailer |
 | `skills/verify/` | generic verify skill |
 | `skills/ci-report/` | weekly report: queue, setup and task time of the 5 slowest jobs |
 | `skills/state-machines/` | weekly audit of implicit state machines |
+| `skills/data-model/` | design note before code; weekly data-model audit |
+| `templates/task.md` | task file template |
+| `scripts/check-layers.sh` | layer guard driven by `.harness/layers.txt` (rows: zone, patterns, may-import) |
 | `scripts/loop.sh` | autonomous task loop (`VERIFY_CMD` sets the check) |
 
 ## Use in a repo
