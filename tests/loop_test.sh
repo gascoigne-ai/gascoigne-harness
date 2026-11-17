@@ -128,6 +128,20 @@ test_uncommitted_task_is_not_listed_and_lint_says_to_commit_it() {
 	pass "$n"
 }
 
+# Bug found on gascoigne-workshop: its tasks/loop.md (a recipe, not a task) was read as a task and
+# failed --lint. Only NNN-slug.md files are tasks.
+test_files_not_named_like_a_task_are_ignored() {
+	local n=${FUNCNAME[0]} dir
+	new_repo; dir=$repo
+	add_task "$dir" 001-one
+	printf '# Task loop\n\nnotes\n' >"$dir/.harness/tasks/loop.md"
+	git -C "$dir" add -A && git -C "$dir" commit -q -m "docs: recipe"
+	loop "$dir" --lint
+	expect "$n" "lint passes (status=$status)" test "$status" == 0 || return
+	loop "$dir" --dry-run
+	[[ $output == *001-one.md* && $output != *loop.md* ]] && pass "$n" || fail "$n" "listed loop.md"
+}
+
 test_task_runs_in_a_worktree_and_leaves_the_checkout_alone() {
 	local n=${FUNCNAME[0]} dir head
 	new_repo; dir=$repo

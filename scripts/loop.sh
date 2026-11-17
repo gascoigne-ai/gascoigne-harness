@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Autonomous agent loop: works through .harness/tasks/*.md marked `status: todo`.
+# Autonomous agent loop: works through .harness/tasks/[0-9]*.md marked `status: todo`.
 # Per task, in its own git worktree (branch loop/<task>): design (feature and bug tasks), implement,
 # gates (scope, test present, verify command), one retry with the failure, then commit.
 # Runs in the consuming repo (the git toplevel of the current directory).
@@ -67,7 +67,7 @@ eligible() {
 
 lint() {
 	local file name value kind problems=0
-	for file in .harness/tasks/*.md; do
+	for file in .harness/tasks/[0-9]*.md; do
 		name=$(basename "$file")
 		problem() { echo "$name: $1" >&2; problems=$((problems + 1)); }
 		[[ $(head -1 "$file") =~ ^status:\ (todo|blocked|failed)$ ]] || problem "status: first line must be 'status: todo', 'blocked' or 'failed'"
@@ -110,7 +110,7 @@ esac
 
 pending() {
 	local file
-	for file in .harness/tasks/*.md; do
+	for file in .harness/tasks/[0-9]*.md; do
 		if eligible "$file"; then
 			echo "$file"
 		fi

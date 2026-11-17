@@ -40,7 +40,7 @@ commit) and commit the pointer as `chore(harness): bump common harness`. A repo 
 shared one, never weaken it.
 
 ## Tasks (per repo)
-One file per task: `.harness/tasks/NNN-slug.md`; see `templates/task.md`. Header lines `key: value`, a
+One file per task: `.harness/tasks/NNN-slug.md` (other files there, such as notes, are ignored); see `templates/task.md`. Header lines `key: value`, a
 blank line, then `# Title` and the body (goal, scope, acceptance). Keep each task one commit's worth of
 work. A done task is deleted by the loop (git keeps it); open ideas live in `.harness/backlog.md`.
 
