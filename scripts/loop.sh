@@ -15,7 +15,7 @@
 # Task file: header lines `key: value` (first line `status: todo`), a blank line, then `# Title` and
 # the body. Optional keys: kind (feature|bug|chore|docs, default chore), commit (conventional subject),
 # scope (comma-separated globs the change may touch), not_before (YYYY-MM-DD), depends_on (task names,
-# eligible once their files are gone from this checkout). Feature and bug tasks need a `## Model`
+# eligible once their files are gone from this checkout). Tasks must be committed. Feature and bug tasks need a `## Model`
 # section or `Model: unchanged`. Reports: <git common dir>/harness/runs/<task>-<time>/.
 set -euo pipefail
 shopt -s nullglob
@@ -56,6 +56,7 @@ title_of() { awk '/^# / { sub(/^# /, ""); print; exit }' "$1"; }
 eligible() {
 	local file=$1 not_before dep
 	[[ $(head -1 "$file") == "status: todo" ]] || return 1
+	git cat-file -e "HEAD:$file" 2>/dev/null || return 1 # a worktree starts from HEAD: the file must be in it
 	not_before=$(header "$file" not_before)
 	if [[ -n $not_before && $not_before > $today ]]; then return 1; fi
 	for dep in $(header "$file" depends_on | tr ',' ' '); do
@@ -70,6 +71,9 @@ lint() {
 		name=$(basename "$file")
 		problem() { echo "$name: $1" >&2; problems=$((problems + 1)); }
 		[[ $(head -1 "$file") =~ ^status:\ (todo|blocked|failed)$ ]] || problem "status: first line must be 'status: todo', 'blocked' or 'failed'"
+		if [[ $(head -1 "$file") == "status: todo" ]] && ! git cat-file -e "HEAD:$file" 2>/dev/null; then
+			problem "not committed: commit the task first, the worktree starts from HEAD"
+		fi
 		kind=$(header "$file" kind)
 		kind=${kind:-chore}
 		[[ $kind =~ ^(feature|bug|chore|docs)$ ]] || problem "kind: '$kind' is not feature, bug, chore or docs"

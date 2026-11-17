@@ -113,6 +113,21 @@ test_dry_run_skips_future_and_blocked_dependencies() {
 		&& pass "$n" || fail "$n" "status=$status"
 }
 
+# Bug: the worktree starts from HEAD, so a task file that was never committed is missing there and
+# git rm failed with "pathspec did not match".
+test_uncommitted_task_is_not_listed_and_lint_says_to_commit_it() {
+	local n=${FUNCNAME[0]} dir
+	new_repo; dir=$repo
+	add_task "$dir" 001-committed
+	printf 'status: todo\n\n# loose\n' >"$dir/.harness/tasks/002-loose.md"
+	loop "$dir" --dry-run
+	[[ $output == *001-committed.md* && $output != *002-loose* ]] || { fail "$n" "dry-run lists the loose task"; return; }
+	loop "$dir" --lint
+	expect "$n" "lint exit 1" test "$status" == 1 || return
+	expect "$n" "lint names the file and says commit" grep -q '002-loose.md: not committed' <<<"$output" || return
+	pass "$n"
+}
+
 test_task_runs_in_a_worktree_and_leaves_the_checkout_alone() {
 	local n=${FUNCNAME[0]} dir head
 	new_repo; dir=$repo
