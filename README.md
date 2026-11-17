@@ -18,7 +18,6 @@ Agent harness shared by the gascoigne repos. Each repo mounts it as a git submod
 | `skills/data-model/` | design note before code; weekly data-model audit |
 | `templates/task.md` | task file template |
 | `scripts/check-layers.sh` | layer guard driven by `.harness/layers.txt` (rows: zone, patterns, may-import) |
-| `scripts/loop.sh` | headless fallback of the task loop for CI (`VERIFY_CMD` sets the check); agents use `skills/task-loop` |
 
 ## Use in a repo
 ```sh
@@ -34,8 +33,7 @@ git submodule update --init            # after a fresh clone or a new worktree
 ```
 Agents: symlink `.claude/agents` to `.harness/agents` and `.harness/agents/task-designer.md`, `task-implementer.md` to `../common/agents/<name>.md`.
 Skills: symlink `.harness/skills/verify` to `../common/skills/verify`, so `.claude/skills` (a symlink to
-`.harness/skills`) finds it. A repo-specific `scripts/loop.sh` may wrap the shared one and set
-`VERIFY_CMD`.
+`.harness/skills`) finds it.
 
 ## Change the shared harness
 Commit and push here first, then in each repo `git -C .harness/common pull` (or checkout the new
@@ -56,31 +54,19 @@ work. A done task is deleted by the loop (git keeps it); open ideas live in `.ha
 | `not_before` | `YYYY-MM-DD`; not eligible earlier |
 | `depends_on` | task names; eligible once their files are gone from the checkout (merged) |
 
-Run the queue from an agent session with the `task-loop` skill (`/task-loop`, `/task-loop --dry-run`,
-`/task-loop --lint`, `/task-loop --once`, `/task-loop <task-name>`). The orchestrator starts subagents inside
-the session, so they use its tool approvals. The shell fallback, for CI without an agent session:
-```sh
-.harness/scripts/loop.sh --dry-run   # list eligible tasks
-.harness/scripts/loop.sh --lint      # validate task headers
-.harness/scripts/loop.sh --once      # do the next task only
-.harness/scripts/loop.sh             # work through all eligible tasks
-.harness/scripts/loop.sh --ff        # also fast-forward the current branch after each task
-.harness/scripts/loop.sh --clean     # remove worktrees and branches of merged loop/* branches
-```
-**Each task runs in its own worktree** (`<repo>-loop-NNN-slug` next to a normal clone, `loop-NNN-slug/`
-in a bare layout) on branch `loop/NNN-slug`; the invoking checkout is never touched. `--in-place` is the
-legacy mode (clean tree needed, commits on the current branch).
+Run the queue from an agent session with the `task-loop` skill: `/task-loop`, `/task-loop --dry-run`,
+`/task-loop --lint`, `/task-loop --once`, `/task-loop <task-name>`. The orchestrator agent starts subagents
+inside the session, so they use its tool approvals. No shell loop, no headless `claude -p`.
 
-Per task: design (feature and bug) → implement (headless `claude -p`) → gates: the agent's last line must
-be `RESULT: done` (`RESULT: blocked <reason>` stops without a commit), changes inside `scope`, a test in
-the diff, `VERIFY_CMD` green. One gate failure resumes the session once with the problem
-(`MAX_ATTEMPTS`); then the task is `failed`, its worktree stays for inspection and the loop moves on.
-Success commits on the branch (conventional subject, `Task:` line, trailer), removes the worktree and
-prints the merge command. Exit status 1 when any task failed or blocked.
+**Each task runs in its own worktree** on branch `loop/NNN-slug` (`scripts/wt`); the invoking checkout is
+never touched.
 
-Env: `VERIFY_CMD` (default `make check`), `MAX_TURNS` (50), `MAX_ATTEMPTS` (2), `MAX_BUDGET_USD`,
-`ALLOWED_TOOLS`, `CLAUDE`, `COMMIT_TRAILER`. Needs `jq`. Design notes, transcripts and verify logs go to
-`<git common dir>/harness/runs/<task>-<time>/`, shared by all worktrees and never committed.
+Per task: `task-designer` (feature and bug) → `task-implementer` → gates run by the orchestrator: the
+implementer's last line is `RESULT: done` (`RESULT: blocked <reason>` stops without a commit), changes
+inside `scope`, a test in the diff, the repo's check green. One gate failure goes back to the same
+implementer once; then the task is `failed`, its worktree stays for inspection and the loop moves on.
+Success commits on the branch (conventional subject, `Task:` line, trailer), fast-forwards the base
+branch and removes the worktree.
 
 `scripts/wt new|path|rm|ls <repo> <branch>` creates worktrees (the loop uses it too).
 

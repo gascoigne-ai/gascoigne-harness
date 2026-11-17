@@ -6,8 +6,8 @@ description: Work through the repo's queued task files (.harness/tasks/NNN-slug.
 # Task loop
 
 You are the orchestrator. You read tasks, start subagents, check their work and commit it. You do
-not implement a task yourself, and you do not shell out to `scripts/loop.sh` (kept only for
-headless CI). Subagents run inside this session, so they use this session's tool approvals.
+not implement a task yourself, and you never shell out to a loop script or headless `claude -p`.
+Subagents run inside this session, so they use this session's tool approvals.
 
 Roles:
 - `task-designer` (`agents/task-designer.md`): read-only, writes the design note for feature and bug tasks.

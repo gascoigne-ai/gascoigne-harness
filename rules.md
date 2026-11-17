@@ -35,7 +35,7 @@ A repo's own `.harness/rules.md` adds to these; it never weakens them. Breaking 
 ## Working
 - Queued tasks (`.harness/tasks/`) are run by the `task-loop` skill: an orchestrator agent starts one
   subagent per task and checks scope, test and verify itself. Do not run tasks by hand-built shell
-  loops, and do not start the loop with `scripts/loop.sh` inside an agent session.
+  loops or headless `claude -p` runs.
 - Finish the whole job before you stop. Do not offer to continue: continue.
 - Ask the user before you delete anything. The one exception: a task file the loop finishes (git
   keeps it).
