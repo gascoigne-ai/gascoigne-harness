@@ -79,7 +79,8 @@ boundary the core cannot control and has a second implementation (a test fake co
 - No one-letter names for parameters: `request`, not `r`; `message`, not `m`. A reader should not
   have to look up the signature to know what an argument is. Applies to functions, methods and
   closures, in every language.
-- Narrow exceptions: `t`/`b` for `*testing.T`/`*testing.B`, loop indices (`i`, `j`), and type
+- Narrow exceptions: `t`/`b` for `*testing.T`/`*testing.B`, loop indices (`i`, `j`), Go method
+  receivers (`c *Client`: the receiver is one short name per type, as Go style asks), and type
   parameters (`T`, `K`, `V`).
 
 ## Hygiene
