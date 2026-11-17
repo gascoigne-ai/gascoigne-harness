@@ -12,11 +12,11 @@ performance, DRY and consistency with bad code. If a reader has to pause, rewrit
   follow the naming rule in `rules.md`.
 - Named constants for protocol numbers, timeouts and thresholds; enums or small types over magic
   strings for states.
-- Typed models (structs, dataclasses, interfaces, records) over ad-hoc dictionaries. A map is for
-  genuinely dynamic keys only.
+- Data model and structure choice: `rules.md` (Data model) and `data-structures.md`.
 - No global mutable state; configuration flows in through constructors or factories.
 - Context, deadline or timeout first on anything doing I/O.
-- Interfaces only for real contracts, or once a second implementation exists. Generics only when they
+- Interfaces only for real contracts, or once a second implementation exists (a test fake counts); see
+  `architecture-style.md` for where ports belong. Generics only when they
   remove real duplication.
 
 ## Errors

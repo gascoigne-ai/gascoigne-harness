@@ -44,9 +44,30 @@ A repo's own `.harness/rules.md` adds to these; it never weakens them. Breaking 
   is. Multiplied scores below 5: file an issue and leave the code alone. 5 or more: fix it, test
   first (the regression-test rule above). Do not design for rare or future cases nobody asked about.
 - Weekly, at least: run the `ci-report` skill (queue, setup and task time of the slowest jobs) and
-  the `state-machines` skill (implicit state machines). Each reports first and changes nothing until
-  the user agrees.
+  the `state-machines` skill (implicit state machines) and the `data-model` skill (audit mode).
+  Each reports first and changes nothing until the user agrees.
 
+## Data model
+Wrong data leads to wrong solutions and complex designs, so the model comes before the logic.
+- **Model before logic.** A task that adds or changes state starts with the types: fields, allowed
+  values, invariants, owner, persistence. Logic is written against the types. If the logic needs a
+  special case, the model is wrong: fix the model.
+- **Choose the structure from the access pattern**, with `data-structures.md`. A task that adds or
+  changes a collection, a record or persisted data names its access pattern, the structure chosen,
+  the alternative rejected and the signal to revisit, in the design note (skill `data-model`).
+  A change without it is rejected.
+- **Illegal states are unrepresentable.** Enum or sum type over bool pairs and magic strings; one
+  type per concept; optional fields only when absence is a real state; a status with a transition
+  table instead of flags that change together.
+- **One source of truth per fact.** A derived value is computed, not stored beside its source.
+- **Parse at the boundary.** Raw input (JSON, tool output, config, provider response) becomes the
+  typed model once, at the edge. Core code never sees an untyped map or a raw string status.
+- **Name data by the domain**, not the transport: `Price`, not `row`.
+- **Persisted and wire formats are versioned** and have a fixture of real output.
+## Architecture
+Layers and ports follow `architecture-style.md`: a core that knows nothing of the outside, adapters
+behind small ports, a composition root, and a layer check in `make check`. A port exists only at a
+boundary the core cannot control and has a second implementation (a test fake counts).
 ## Design
 - Table-driven designs (handler tables, dialect tables) over switch sprawl.
 - No speculative abstractions, options or hooks "for later".
@@ -74,6 +95,7 @@ A repo's own `.harness/rules.md` adds to these; it never weakens them. Breaking 
 - Every repo is a bare repo (`.bare`) with one worktree per branch next to it (`master/` or `main/`,
   `<branch>/`; `/` in a branch name becomes `-`). Each agent works in its own worktree, never in
   another's.
-- Create and remove with `wt new|rm <repo> <branch>` from the parent directory. It copies
-  `.claude/settings.local.json`.
+- Create and remove with `wt new|rm <repo> <branch>` from the parent directory (the script is
+  `scripts/wt` in the common harness). It copies `.claude/settings.local.json`.
+- The task loop is no exception: it runs every task in its own worktree on branch `loop/<task>`.
 - Build output is ignored, so build per worktree.
