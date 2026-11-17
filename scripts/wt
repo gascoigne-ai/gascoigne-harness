@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# Worktree helper shared by the gascoigne repos and the task loop.
+#
+# usage: wt new <repo> <branch> [base]   create the worktree (and branch from base); prints its path
+#        wt path <repo> <branch>         print the worktree path
+#        wt rm <repo> <branch>           remove the worktree (the branch stays)
+#        wt ls [repo]                    list worktrees
+#
+# <repo>: a repo root directory (contains `.bare`, or is a normal clone), or a name such as `cli` /
+# `gascoigne-cli` looked up under $WT_ROOT (default: the parent of the harness checkout's repo dir).
+# Worktree directory: `<root>/<branch with / replaced by ->` in a bare layout, `<root>-<branch>` next
+# to a normal clone. Copies `.claude/settings.local.json` from the base checkout.
+set -euo pipefail
+
+root_of() {
+	local repo=$1
+	if [[ $repo == */* || -d $repo ]]; then
+		(cd "$repo" && pwd)
+		return
+	fi
+	local parent=${WT_ROOT:-$(cd "$(dirname "$0")/../../.." && pwd)}
+	case $repo in
+	gascoigne-*) echo "$parent/$repo" ;;
+	*) echo "$parent/gascoigne-$repo" ;;
+	esac
+}
+
+dir_of() { # <root> <branch>
+	local name=${2//\//-}
+	if [[ -d $1/.bare ]]; then echo "$1/$name"; else echo "$1-$name"; fi
+}
+
+case ${1:-} in
+new)
+	root=$(root_of "${2:?repo}")
+	branch=${3:?branch}
+	dir=$(dir_of "$root" "$branch")
+	base=${4:-$(git -C "$root" symbolic-ref --short HEAD)}
+	if git -C "$root" show-ref -q --verify "refs/heads/$branch"; then
+		git -C "$root" worktree add -q "$dir" "$branch" >&2
+	else
+		git -C "$root" worktree add -q -b "$branch" "$dir" "$base" >&2
+	fi
+	git -C "$dir" submodule update --init -q >&2 2>/dev/null || true
+	settings=$root/$(git -C "$root" symbolic-ref --short HEAD)/.claude/settings.local.json
+	[[ -f $settings ]] || settings=$root/.claude/settings.local.json
+	if [[ -f $settings ]]; then
+		mkdir -p "$dir/.claude"
+		cp "$settings" "$dir/.claude/"
+	fi
+	echo "$dir"
+	;;
+path) dir_of "$(root_of "${2:?repo}")" "${3:?branch}" ;;
+rm)
+	root=$(root_of "${2:?repo}")
+	git -C "$root" worktree remove --force "$(dir_of "$root" "${3:?branch}")"
+	;;
+ls)
+	if [[ -n ${2:-} ]]; then
+		git -C "$(root_of "$2")" worktree list
+	else
+		for repo in "${WT_ROOT:-$(cd "$(dirname "$0")/../../.." && pwd)}"/gascoigne-*/; do git -C "$repo" worktree list; done
+	fi
+	;;
+*) sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac
