@@ -26,7 +26,9 @@ mkdir -p "$logs"
 
 pending() {
 	for f in .harness/tasks/*.md; do
-		[[ $(head -1 "$f") == "status: todo" ]] && echo "$f"
+		if [[ $(head -1 "$f") == "status: todo" ]]; then
+			echo "$f"
+		fi
 	done
 }
 
