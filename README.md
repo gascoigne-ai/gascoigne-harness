@@ -12,6 +12,7 @@ Agent harness shared by the gascoigne repos. Each repo mounts it as a git submod
 | `commit-style.md` | conventional commit format, body, trailer |
 | `skills/verify/` | generic verify skill |
 | `skills/task-loop/` | the task loop as a skill: an orchestrator agent runs one subagent per task and gates the result |
+| `commands/task-loop.md` | registers the `/task-loop` slash command; hands its arguments to the `task-loop` skill |
 | `agents/` | subagent roles the loop starts: `task-designer` (read-only), `task-implementer` |
 | `skills/ci-report/` | weekly report: queue, setup and task time of the 5 slowest jobs |
 | `skills/state-machines/` | weekly audit of implicit state machines |
@@ -32,6 +33,7 @@ git submodule update --init            # after a fresh clone or a new worktree
 @.harness/rules.md
 ```
 Agents: symlink `.claude/agents` to `.harness/agents` and `.harness/agents/task-designer.md`, `task-implementer.md` to `../common/agents/<name>.md`.
+Commands: symlink `.claude/commands` to `.harness/commands` and `.harness/commands/task-loop.md` to `../common/commands/task-loop.md`.
 Skills: symlink `.harness/skills/verify` to `../common/skills/verify`, so `.claude/skills` (a symlink to
 `.harness/skills`) finds it.
 
