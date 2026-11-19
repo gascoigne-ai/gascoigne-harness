@@ -50,7 +50,7 @@ work. A done task is deleted by the loop (git keeps it); open ideas live in `.ha
 | Header | Meaning |
 |---|---|
 | `status: todo` | first line; `blocked` and `failed` are skipped |
-| `kind` | `feature`, `bug`, `chore` (default), `docs`. Feature and bug tasks get a design phase, need a `## Model` section (or `Model: unchanged`) and a test in the diff |
+| `kind` | `feature`, `bug`, `chore` (default), `refactor`, `ci`, `docs`. Refactor and ci tasks run like chore: no design phase, no new test needed (a refactor keeps the tests unchanged). Feature and bug tasks get a design phase, need a `## Model` section (or `Model: unchanged`) and a test in the diff |
 | `commit` | conventional subject, at most 72 characters; default `chore: <title>` |
 | `scope` | comma-separated globs the change may touch; anything else fails the task |
 | `not_before` | `YYYY-MM-DD`; not eligible earlier |

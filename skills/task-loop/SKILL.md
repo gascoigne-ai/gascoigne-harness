@@ -24,7 +24,7 @@ header table (`status`, `kind`, `commit`, `scope`, `not_before`, `depends_on`).
 ## 1. Lint (also `--lint`)
 For every `.harness/tasks/[0-9]*.md` report, and stop on any problem:
 - first line is `status: todo`, `blocked` or `failed`;
-- `kind` is `feature`, `bug`, `chore` or `docs` (default `chore`);
+- `kind` is `feature`, `bug`, `chore`, `refactor`, `ci` or `docs` (default `chore`);
 - `commit` matches `^(feat|fix|docs|test|refactor|build|ci|chore|release)(\([a-z0-9._-]+\))?: .+$`, at most 72 characters;
 - `not_before` is `YYYY-MM-DD`;
 - feature and bug tasks contain `## Model` or `Model: unchanged`;
