@@ -20,7 +20,7 @@ behavior before, what changes now. Skip it when the subject says everything. No 
 
 ## Rules
 - One focused change per commit; do not mix a refactor with a feature.
-- Behavior changes update docs (the matching `architecture` section) and tests in the same commit.
+- Behavior changes update tests and the docs that describe them in the same commit.
 - Changes to the shared harness (`.harness/common`) are committed in that repo first; the consuming
   repo then commits the bumped submodule pointer as `chore(harness): bump common harness`.
 - End with the `Co-Authored-By` trailer when an assistant wrote the change.

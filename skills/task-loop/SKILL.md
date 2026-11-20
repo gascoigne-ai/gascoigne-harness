@@ -50,7 +50,7 @@ for `--once`, or run only the named task when a name is given. Never retry a tas
      matches `/`). Anything else fails.
    - **test**: feature and bug tasks have a test file in the diff (`_test.`, `.test.`, `.spec.`,
      `tests/`, `test_`).
-   - **verify**: run the repo's check command from its `CLAUDE.md` (the verify skill). Failure
+   - **verify**: run the repo's check command from its `CLAUDE.md`. Failure
      fails the task.
 5. A failed gate: send the problem to the same implementer (SendMessage) once. A second failure
    fails the task: keep the worktree, report the gate and the last 60 lines of output.

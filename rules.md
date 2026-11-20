@@ -46,19 +46,14 @@ A repo's own `.harness/rules.md` adds to these; it never weakens them. Breaking 
 - Rate every bug you find from 1 to 10 for how often it would happen and from 1 to 10 for how bad it
   is. Multiplied scores below 5: file an issue and leave the code alone. 5 or more: fix it, test
   first (the regression-test rule above). Do not design for rare or future cases nobody asked about.
-- Weekly, at least: run the `ci-report` skill (queue, setup and task time of the slowest jobs) and
-  the `state-machines` skill (implicit state machines) and the `data-model` skill (audit mode).
-  Each reports first and changes nothing until the user agrees.
+- Weekly audits (`ci-report`, `state-machines`, `data-model`): see README.
 
 ## Data model
 Wrong data leads to wrong solutions and complex designs, so the model comes before the logic.
 - **Model before logic.** A task that adds or changes state starts with the types: fields, allowed
   values, invariants, owner, persistence. Logic is written against the types. If the logic needs a
   special case, the model is wrong: fix the model.
-- **Choose the structure from the access pattern**, with `data-structures.md`. A task that adds or
-  changes a collection, a record or persisted data names its access pattern, the structure chosen,
-  the alternative rejected and the signal to revisit, in the design note (skill `data-model`).
-  A change without it is rejected.
+- **Choose the structure from the access pattern** (`data-structures.md`, skill `data-model`); a change to a collection, record or persisted data without that design note is rejected.
 - **Illegal states are unrepresentable.** Enum or sum type over bool pairs and magic strings; one
   type per concept; optional fields only when absence is a real state; a status with a transition
   table instead of flags that change together.
@@ -96,10 +91,4 @@ boundary the core cannot control and has a second implementation (a test fake co
   untouched code.
 
 ## Worktrees
-- Every repo is a bare repo (`.bare`) with one worktree per branch next to it (`master/` or `main/`,
-  `<branch>/`; `/` in a branch name becomes `-`). Each agent works in its own worktree, never in
-  another's.
-- Create and remove with `wt new|rm <repo> <branch>` from the parent directory (the script is
-  `scripts/wt` in the common harness). It copies `.claude/settings.local.json`.
-- The task loop is no exception: it runs every task in its own worktree on branch `loop/<task>`.
-- Build output is ignored, so build per worktree.
+- Every repo is a bare repo (`.bare`) with one worktree per branch; each agent works in its own (`wt new|rm <repo> <branch>`, `scripts/wt`), the task loop included (branch `loop/<task>`). Build per worktree.

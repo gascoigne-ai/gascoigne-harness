@@ -41,4 +41,4 @@ that only forwards calls; no port whose fake no test uses. If the port list outg
 `data-model` audit: the cause is usually a missing core type.
 
 ## Enforce it
-Each repo lists its zones in `.harness/layers.txt` and runs `scripts/check-layers.sh` from `make check`.
+Each repo checks the dependency direction from its check command: a script over a zone list (`scripts/check-layers.sh`) or a test that reads the imports.

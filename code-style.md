@@ -36,7 +36,7 @@ performance, DRY and consistency with bad code. If a reader has to pause, rewrit
   punctuation, node ids that are not Mermaid keywords (`end`, `graph`, `in`). Check a new diagram
   with Mermaid's parser (`mermaid.parse`, under jsdom in node) before committing.
 - Screenshots stay images; tables stay tables.
-- Docs describe behavior in the present tense and change in the same commit as the behavior.
+- Docs describe behavior in the present tense.
 
 ## Tests
 - Behavior, not implementation details. The test name states the behavior

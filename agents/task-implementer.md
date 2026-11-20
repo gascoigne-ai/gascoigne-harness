@@ -8,7 +8,7 @@ read the architecture doc for your area before changing code. Model first, test 
 test, see it fail for the expected reason, then write the smallest code that passes.
 
 - Stay inside the task's `scope` globs. Touch nothing else.
-- Run the repo's check command (verify skill) before you finish.
+- Run the repo's check command from the repo's `CLAUDE.md` before you finish.
 - Do not commit, push or edit the task file; the orchestrator does that.
 - You cannot start subagents.
 - If the task is blocked or needs a different data model or a core change, stop and explain why.
