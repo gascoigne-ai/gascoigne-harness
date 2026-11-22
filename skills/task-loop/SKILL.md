@@ -37,9 +37,10 @@ eligible tasks in name order, one at a time. List them and stop for `--dry-run`.
 for `--once`, or run only the named task when a name is given. Never retry a task twice in one run.
 
 ## 3. Run one task
-1. Start a worktree for branch `loop/<task>` from the current branch (`wt new <repo> loop/<task>`
-   from the repo parent, or the Agent tool's `isolation: "worktree"`). The branch must not exist yet;
-   if it does, report it and skip the task. Run `git submodule update --init` there.
+1. Start a worktree for branch `loop/<task>` from the current branch with the harness script:
+   `.harness/common/scripts/wt new <repo-root> loop/<task>` (it prints the path and initializes the
+   submodules). Do not use the Agent tool's `isolation: "worktree"`: it can start from an older commit
+   than the current branch. The branch must not exist yet; if it does, report it and skip the task.
 2. Feature and bug tasks: start `task-designer` with the task file. Its reply must contain `## Model`
    or `Model: unchanged`, else the task fails. Keep the reply as the design.
 3. Start `task-implementer` in the worktree with the task text and the design. It ends with

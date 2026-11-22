@@ -41,7 +41,8 @@ new)
 	else
 		git -C "$root" worktree add -q -b "$branch" "$dir" "$base" >&2
 	fi
-	git -C "$dir" submodule update --init -q >&2 2>/dev/null || true
+	# protocol.file.allow: a submodule of a local worktree is cloned from a file path, which git refuses by default.
+	git -C "$dir" -c protocol.file.allow=always submodule update --init -q >&2
 	settings=$root/$(git -C "$root" symbolic-ref --short HEAD)/.claude/settings.local.json
 	[[ -f $settings ]] || settings=$root/.claude/settings.local.json
 	if [[ -f $settings ]]; then
